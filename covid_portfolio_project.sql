@@ -1,11 +1,10 @@
 
--- TEST QUERY
-SELECT date, SUM(total_cases) AS sum_cases, SUM(total_deaths) AS sum_deaths
-FROM coviddeaths
-WHERE date = '2020-01-17'
-GROUP BY date
-ORDER BY date
+-- TEST QUERIES
+SELECT *
+FROM coviddeaths;
 
+SELECT *
+FROM covidvaccinations;
 
 
 ---- Transform empty values in 'continent' column to 'NULL'
