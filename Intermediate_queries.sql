@@ -49,21 +49,28 @@ LEFT JOIN matches AS m
 ON c.id = m.country_id
 GROUP BY country;
 
+--- How do you get both the home and away team names into one final query result?
 
---- Declare a CTE that calculates the total goals from matches in August of the 2013/2014 season.
+SELECT
+	m.date,
+	home.hometeam,
+	away.awayteam,
+	m.home_goal,
+   	m.away_goal
+FROM match AS m
+-- Join the home subquery to the match table
+LEFT JOIN (
+  	SELECT match.id, team.team_long_name AS hometeam
+  	FROM match
+  	LEFT JOIN team
+  	ON match.hometeam_id = team.team_api_id) AS home
+ON home.id = m.id
+-- Join the away subquery to the match table
+LEFT JOIN (
+ 	SELECT match.id, team.team_long_name AS awayteam
+  	FROM match
+  	LEFT JOIN team
+  	ON match.awayteam_id = team.team_api_id) AS away
+ON away.id = m.id;
 
-WITH match_list AS ( 
-	SELECT 
-		country_id,
-		(home_goal + away_goal) AS goals
-	FROM match
-	WHERE id IN (
-		SELECT id
-		FROM match
-		WHERE season = '2013/2014' AND EXTRACT(MONTH FROM date) = 8))
-SELECT 
-	l.name,
-	AVG(goals)
-FROM league AS l
-LEFT JOIN match_list ON l.id = match_list.country_id
-GROUP BY l.name;
+
